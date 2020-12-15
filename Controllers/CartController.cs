@@ -28,24 +28,25 @@ namespace DMSOShopping.Controllers
         // GET: Cart/AddToCart/5
         public IActionResult AddToCart(Guid id, int quantity)
         {
-            string CartItemStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
-            List<CartItem> cartItems = new List<CartItem>();
-            if (!string.IsNullOrEmpty(CartItemStr))
+            // We can remove all lines that get cart in a spearate function to reuse it
+            string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
+            Cart cart = new Cart();
+            if (!string.IsNullOrEmpty(CartStr))
             {
-                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(CartItemStr);
+                cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
-                if (cartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
-                    cartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity += quantity;
+                if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
+                    cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity += quantity;
                 else
-                    cartItems.Add(new CartItem() { ItemId = id, Quantity = quantity });
-
+                    cart.CartItems.Add(new CartItem() { ItemId = id, Quantity = quantity });
             }
             else
-                cartItems.Add(new CartItem() { ItemId = id, Quantity = quantity });
+                cart.CartItems = new List<CartItem>
+                {
+                    new CartItem() { ItemId = id, Quantity = quantity }
+                };
 
-            // Save new or updated to session
-            var UpdatedCartItemStr = JsonConvert.SerializeObject(cartItems);
-            _httpContextAccessor.HttpContext.Session.SetString(SessionNames.CART, UpdatedCartItemStr);
+            UpdateCartSession(cart);
 
             return RedirectToAction(nameof(ShowMyCart));
         }
@@ -53,18 +54,16 @@ namespace DMSOShopping.Controllers
 
         public IActionResult UpdateCartItem(Guid id, int quantity)
         {
-            string CartItemStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
-            List<CartItem> cartItems = new List<CartItem>();
-            if (!string.IsNullOrEmpty(CartItemStr))
+            string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
+            Cart cart = new Cart();
+            if (!string.IsNullOrEmpty(CartStr))
             {
-                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(CartItemStr);
+                cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
-                if (cartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
-                    cartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity = quantity;
+                if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
+                    cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity = quantity;
 
-                // Update session
-                var UpdatedCartItemStr = JsonConvert.SerializeObject(cartItems);
-                _httpContextAccessor.HttpContext.Session.SetString(SessionNames.CART, UpdatedCartItemStr);
+                UpdateCartSession(cart);
             }
 
             return RedirectToAction(nameof(ShowMyCart));
@@ -72,43 +71,72 @@ namespace DMSOShopping.Controllers
 
         public IActionResult DeleteCartItem(Guid id)
         {
-            string CartItemStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
-            List<CartItem> cartItems = new List<CartItem>();
-            if (!string.IsNullOrEmpty(CartItemStr))
+            string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
+            Cart cart = new Cart();
+            if (!string.IsNullOrEmpty(CartStr))
             {
-                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(CartItemStr);
+                cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
-                if (cartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
-                   cartItems.RemoveAll(i => i.ItemId == id);
+                if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
+                    cart.CartItems.RemoveAll(i => i.ItemId == id);
 
-                // Update session
-                var UpdatedCartItemStr = JsonConvert.SerializeObject(cartItems);
-                _httpContextAccessor.HttpContext.Session.SetString(SessionNames.CART, UpdatedCartItemStr);
+                UpdateCartSession(cart);
             }
 
             return RedirectToAction(nameof(ShowMyCart));
         }
 
-
-
         public async Task<IActionResult> ShowMyCart()
         {
-            string CartItemStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
-            List<CartItem> cartItems = new List<CartItem>();
-            if (!string.IsNullOrEmpty(CartItemStr))
+            return View(await FullCartOrDefault());
+        }
+
+        public async Task<IActionResult> AddCouponToCart(string code)
+        {
+            Discount.Discounts.TryGetValue(code, out double value);
+
+            Cart cart = await FullCartOrDefault();
+            if (value == 0)
             {
-                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(CartItemStr);
-                List<Guid> ItemsIds = cartItems.Select(ci => ci.ItemId).ToList();
+                ModelState.AddModelError(nameof(cart.DiscountCode), "Coupon Code is Wrong");
+                return View(nameof(ShowMyCart), cart);
+            }
+            else
+            {
+                cart.DiscountCode = code;
+                cart.DiscountValue = value;
+            }
+
+            UpdateCartSession(cart);
+
+            return View(nameof(ShowMyCart), cart);
+
+        }
+
+        private async Task<Cart> FullCartOrDefault()
+        {
+            string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
+            if (!string.IsNullOrEmpty(CartStr))
+            {
+                Cart cart = JsonConvert.DeserializeObject<Cart>(CartStr);
+
+                List<Guid> ItemsIds = cart.CartItems.Select(ci => ci.ItemId).ToList();
                 List<Item> items = await _context.Items.Where(i => ItemsIds.Contains(i.Id)).Include(i => i.UOM).AsNoTracking().ToListAsync();
-                foreach (CartItem cartItem in cartItems)
+                foreach (CartItem cartItem in cart.CartItems)
                 {
                     cartItem.Item = items.Where(i => i.Id == cartItem.ItemId).FirstOrDefault();
                 }
+                return cart;
             }
-            return View(cartItems);
+            return new Cart();
         }
 
-      
+        private void UpdateCartSession(Cart cart)
+        {
+            // Update or add session
+            var UpdatedCartItemStr = JsonConvert.SerializeObject(cart);
+            _httpContextAccessor.HttpContext.Session.SetString(SessionNames.CART, UpdatedCartItemStr);
+        }
 
 
     }

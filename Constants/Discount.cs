@@ -13,8 +13,8 @@ namespace DMSOShopping.Constants
         public const string GROUP_B = "c2";
         public static Dictionary<string, double> Discounts = new Dictionary<string, double>()
         {
-            { GROUP_A, 14 },
-            { GROUP_B, 20 }
+            { GROUP_A, 50 },
+            { GROUP_B, 100 }
         };
 
         public static double GetDiscountValue(string discountKey)
