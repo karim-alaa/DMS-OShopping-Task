@@ -16,7 +16,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DMSOShopping</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Items" asp-action="Index">DMS-OShopping</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -28,17 +28,14 @@
                         @{
                             Customer LoggedUser = null;
                             string LoggedUserStr = Context.Session.GetString(SessionNames.USER);
-                            if(!string.IsNullOrEmpty(LoggedUserStr))
+                            if (!string.IsNullOrEmpty(LoggedUserStr))
                                 LoggedUser = JsonConvert.DeserializeObject<Customer>(LoggedUserStr);
                         }
-                       
+
                         @if (sessionFound != "YES")
                         {
                             <li class="nav-item" style="padding: 10px;">
                                 <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item" style="padding: 10px;">
-                                <a id="nav-link" class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item" style="padding: 10px;">
                                 <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Register">Register</a>
@@ -48,22 +45,36 @@
                         @if (sessionFound == "YES")
                         {
 
-                            <li class="nav-item" style="padding: 10px;">
-                                <a id="nav-link" class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
+                           
 
                             @if (LoggedUser.IsAdmin)// admin
                             {
                                 <li class="nav-item" style="padding: 10px;">
-                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Welcome Admin</a>
+                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="AdminCustomers" asp-action="Index">Customers</a>
                                 </li>
-                            }
-                            else // user
-                            {
+
                                 <li class="nav-item" style="padding: 10px;">
-                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Items" asp-action="Index">Items</a>
+                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="AdminItems" asp-action="Index">Items</a>
                                 </li>
+
+                                <li class="nav-item" style="padding: 10px;">
+                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="AdminOrderHeaders" asp-action="Index">Orders</a>
+                                </li>
+
+                                <li class="nav-item" style="padding: 10px;">
+                                    <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="AdminUOMs" asp-action="Index">UOM</a>
+                                </li>
+
+
                             }
+
+                            <li class="nav-item" style="padding: 10px;">
+                                <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Items" asp-action="Index">Items</a>
+                            </li>
+
+                            <li class="nav-item" style="padding: 10px;">
+                                <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="ShowMyCart">Show My Cart</a>
+                            </li>
 
                             <li class="nav-item" style="padding: 10px;">
                                 <a id="nav-link" class="nav-link text-dark" asp-area="" asp-controller="Customers" asp-action="Details" asp-route-id="@LoggedUser.Id">My Profile</a>
@@ -90,7 +101,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - DMSOShopping - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - DMS-OShopping - Karim Alaa
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

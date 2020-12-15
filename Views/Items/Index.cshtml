@@ -77,7 +77,7 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                <form asp-action="AddToCart" asp-controller="Items">
+                <form asp-action="AddToCart" asp-controller="Cart">
                     <input name="id" value="@item.Id" type="hidden" class="form-control" />
                     <input name="quantity" value="1" type="hidden" class="form-control" />
                     <div class="form-group">

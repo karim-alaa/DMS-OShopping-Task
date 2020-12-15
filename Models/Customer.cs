@@ -26,7 +26,9 @@ namespace DMSOShopping.Models
         public string Password { get; set; }
         [DisplayName("Is Admin")]
         public bool IsAdmin { get; set; }
+        [ScaffoldColumn(false)]
         public DateTime CreatedAt { get; set; }
+        [ScaffoldColumn(false)]
         public DateTime UpdateAt { get; set; }
 
         // Relations

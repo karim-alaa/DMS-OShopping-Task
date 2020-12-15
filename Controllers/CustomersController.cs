@@ -58,6 +58,12 @@ namespace DMSOShopping.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(await _context.Customers.Where(c => c.Username == customer.Username).FirstOrDefaultAsync() != null)
+                {
+                    ModelState.AddModelError(nameof(customer.Username), "Username Already Exists");
+                    return View(customer);
+                }
+
                 customer.Id = Guid.NewGuid();
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
@@ -96,6 +102,13 @@ namespace DMSOShopping.Controllers
 
             if (ModelState.IsValid)
             {
+
+                if (await _context.Customers.Where(c => c.Username == customer.Username).FirstOrDefaultAsync() != null)
+                {
+                    ModelState.AddModelError(nameof(customer.Username), "Username Already Exists");
+                    return View(customer);
+                }
+
                 try
                 {
                     _context.Update(customer);
@@ -132,6 +145,7 @@ namespace DMSOShopping.Controllers
         public IActionResult Logout()
         {
             _httpContextAccessor.HttpContext.Session.SetString(SessionNames.ISLOGIN, SessionNames.NO);
+            _httpContextAccessor.HttpContext.Session.Clear();
 
             return RedirectToAction(nameof(Login));
         }

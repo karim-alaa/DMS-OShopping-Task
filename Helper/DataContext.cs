@@ -24,7 +24,7 @@ namespace DMSOShopping.Helper
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+         
         }
     }
 }

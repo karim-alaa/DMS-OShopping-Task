@@ -87,13 +87,15 @@ namespace DMSOShopping.Migrations
                     b.Property<string>("SellerName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UOM")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UOMId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UOMId");
 
                     b.ToTable("Items");
                 });
@@ -128,9 +130,6 @@ namespace DMSOShopping.Migrations
                     b.Property<double>("TotalPrice")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("UOMId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
@@ -139,8 +138,6 @@ namespace DMSOShopping.Migrations
                     b.HasIndex("ItemId");
 
                     b.HasIndex("OrderHeaderId");
-
-                    b.HasIndex("UOMId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -217,6 +214,17 @@ namespace DMSOShopping.Migrations
                     b.ToTable("UOMs");
                 });
 
+            modelBuilder.Entity("DMSOShopping.Models.Item", b =>
+                {
+                    b.HasOne("DMSOShopping.Models.UOM", "UOM")
+                        .WithMany()
+                        .HasForeignKey("UOMId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UOM");
+                });
+
             modelBuilder.Entity("DMSOShopping.Models.OrderDetails", b =>
                 {
                     b.HasOne("DMSOShopping.Models.Item", "Item")
@@ -231,17 +239,9 @@ namespace DMSOShopping.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DMSOShopping.Models.UOM", "UOM")
-                        .WithMany()
-                        .HasForeignKey("UOMId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Item");
 
                     b.Navigation("OrderHeader");
-
-                    b.Navigation("UOM");
                 });
 
             modelBuilder.Entity("DMSOShopping.Models.OrderHeader", b =>

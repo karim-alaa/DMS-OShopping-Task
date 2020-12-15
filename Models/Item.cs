@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -17,15 +18,20 @@ namespace DMSOShopping.Models
         }
 
         public Guid Id { get; set; }
+        [DisplayName("Name in English")]
         public string Name_FL {get;set;}
+        [DisplayName("Name in Arabic")]
         public string Name_SL { get; set; }
         public string Brand { get; set; }
+        [DisplayName("Is New")]
         public bool IsNew { get; set; }
         public double Price { get; set; }
+        [DisplayName("Is Free Shipping")]
         public bool IsFreeShipping { get; set; }
+        [DisplayName("Seller Name")]
         public string SellerName { get; set; }
         public string Description { get; set; }
-        public string UOM { get; set; }
+        
         public int Quantity { get; set; }
 
 
@@ -34,5 +40,11 @@ namespace DMSOShopping.Models
 
         [ScaffoldColumn(false)]
         public DateTime UpdateAt { get; set; }
+
+        // UOM
+        [ForeignKey("UOMId")]
+        public Guid UOMId { get; set; }
+        public UOM UOM { get; set; }
+
     }
 }
