@@ -51,7 +51,7 @@ namespace DMSOShopping.Controllers
         // GET: AdminOrderHeaders/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id");
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Username");
             return View();
         }
 
@@ -69,7 +69,7 @@ namespace DMSOShopping.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", orderHeader.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Username", orderHeader.CustomerId);
             return View(orderHeader);
         }
 
@@ -86,7 +86,7 @@ namespace DMSOShopping.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", orderHeader.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Username", orderHeader.CustomerId);
             return View(orderHeader);
         }
 
@@ -122,7 +122,7 @@ namespace DMSOShopping.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", orderHeader.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Username", orderHeader.CustomerId);
             return View(orderHeader);
         }
 

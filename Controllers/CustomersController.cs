@@ -96,7 +96,7 @@ namespace DMSOShopping.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Description_FL,Description_SL,Username,Password,IsAdmin,CreatedAt,UpdateAt")] Customer customer)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Description_FL,Description_SL,Username,Password,CreatedAt,UpdateAt")] Customer customer)
         {
             if (id != customer.Id)
             {
@@ -111,6 +111,8 @@ namespace DMSOShopping.Controllers
                     ModelState.AddModelError(nameof(customer.Username), "Username Already Exists");
                     return View(customer);
                 }
+                // don't change role
+                customer.IsAdmin = savedCustomer.IsAdmin;
 
                 try
                 {

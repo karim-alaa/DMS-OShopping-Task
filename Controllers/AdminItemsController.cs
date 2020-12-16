@@ -51,7 +51,7 @@ namespace DMSOShopping.Controllers
         // GET: AdminItems/Create
         public IActionResult Create()
         {
-            ViewData["UOMId"] = new SelectList(_context.UOMs, "Id", "Id");
+            ViewData["UOMNames"] = new SelectList(_context.UOMs, "Id", "Name");
             return View();
         }
 
@@ -69,7 +69,7 @@ namespace DMSOShopping.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UOMId"] = new SelectList(_context.UOMs, "Id", "Id", item.UOMId);
+            ViewData["UOMNames"] = new SelectList(_context.UOMs, "Id", "Name", item.UOMId);
             return View(item);
         }
 
@@ -86,7 +86,7 @@ namespace DMSOShopping.Controllers
             {
                 return NotFound();
             }
-            ViewData["UOMId"] = new SelectList(_context.UOMs, "Id", "Id", item.UOMId);
+            ViewData["UOMNames"] = new SelectList(_context.UOMs, "Id", "Name", item.UOMId);
             return View(item);
         }
 
@@ -122,7 +122,7 @@ namespace DMSOShopping.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UOMId"] = new SelectList(_context.UOMs, "Id", "Id", item.UOMId);
+            ViewData["UOMNames"] = new SelectList(_context.UOMs, "Id", "Name", item.UOMId);
             return View(item);
         }
 

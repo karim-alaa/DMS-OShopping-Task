@@ -31,4 +31,6 @@ Password: 123456
 ```
 
 ## New
-Roles Middleware to prevent normal users to access Admin URLs
+* Roles Middleware to prevent normal users to access Admin URLs
+* Replace Ids with Names in admin panel
+* Fixing Bugs

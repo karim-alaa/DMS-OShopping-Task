@@ -482,3 +482,4 @@ C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\Orders\Inv
 C:\Users\karim\source\repos\DMSOShopping\bin\Debug\net5.0\libwkhtmltox.dll
 C:\Users\karim\source\repos\DMSOShopping\bin\Debug\net5.0\libwkhtmltox.dylib
 C:\Users\karim\source\repos\DMSOShopping\bin\Debug\net5.0\libwkhtmltox.so
+C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\Orders\MyOrders.cshtml.g.cs

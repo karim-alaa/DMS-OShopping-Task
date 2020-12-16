@@ -124,8 +124,14 @@ namespace DMSOShopping.Controllers
 
 
 
-     
 
+        // GET: /Orders/MyOrders
+        public async Task<IActionResult> MyOrders()
+        {
+            Customer customer  =  _helper.GetCustomerData();
+            var dataContext = _context.OrderHeaders.Include(o => o.Customer).Where(o => o.CustomerId == customer.Id);
+            return View(await dataContext.ToListAsync());
+        }
 
 
 
