@@ -17,9 +17,9 @@ namespace DMSOShopping.Models
         }
 
         public Guid Id { get; set; }
-        [DisplayName("Description in English")]
+        [DisplayName("Name in English")]
         public string Description_FL { get; set; }
-        [DisplayName("Description in Arabic")]
+        [DisplayName("Name in Arabic")]
         public string Description_SL { get; set; }
         public string Username { get; set; }
         [DataType(DataType.Password)]

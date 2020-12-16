@@ -54,7 +54,7 @@ namespace DMSOShopping.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description_FL,Description_SL,Username,Password,IsAdmin,CreatedAt,UpdateAt")] Customer customer)
+        public async Task<IActionResult> Register([Bind("Id,Description_FL,Description_SL,Username,Password,IsAdmin,CreatedAt,UpdateAt")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace DMSOShopping.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Login));
             }
-            return View(customer);
+            return RedirectToAction(nameof(Login));
         }
 
         // GET: Customers/Edit/5
