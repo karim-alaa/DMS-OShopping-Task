@@ -180,11 +180,6 @@ C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminItems
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminItems\Details.cshtml.g.cs
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminItems\Edit.cshtml.g.cs
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminItems\Index.cshtml.g.cs
-C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderDetails\Create.cshtml.g.cs
-C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderDetails\Delete.cshtml.g.cs
-C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderDetails\Details.cshtml.g.cs
-C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderDetails\Edit.cshtml.g.cs
-C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderDetails\Index.cshtml.g.cs
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderHeaders\Create.cshtml.g.cs
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderHeaders\Delete.cshtml.g.cs
 C:\Users\karim\source\repos\DMSOShopping\obj\Debug\net5.0\Razor\Views\AdminOrderHeaders\Details.cshtml.g.cs

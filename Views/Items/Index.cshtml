@@ -7,86 +7,43 @@
 
 <h1>Items</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name_FL)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name_SL)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsNew)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsFreeShipping)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SellerName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UOM)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name_FL)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name_SL)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsNew)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsFreeShipping)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SellerName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UOM)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                <form asp-action="AddToCart" asp-controller="Cart">
-                    <input name="id" value="@item.Id" type="hidden" class="form-control" />
-                    <input name="quantity" value="1" type="hidden" class="form-control" />
-                    <div class="form-group">
-                        <input type="submit" value="Add To Cart" class="btn btn-primary" />
+<link rel="stylesheet" href="~/css/item.css" />
+<br />
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+
+            <div class="block span3">
+                <div class="product">
+                    <img src="~/Images/item.png">
+                    <div class="buttons">
+                        <a class="btn btn-primary preview" asp-action="Details" asp-route-id="@item.Id">View item</a>
                     </div>
-                </form>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </div>
+
+                <div class="info">
+                    <h4>@item.Name_FL</h4>
+                    <span class="description">
+                        @item.Description
+                    </span>
+                    <span class="price">$@item.Price</span>
+
+                    <form asp-action="AddToCart" asp-controller="Cart">
+                        <input name="id" value="@item.Id" type="hidden" class="form-control" />
+                        <input name="quantity" value="1" type="hidden" class="form-control" />
+                        <input type="submit" value="Add To Cart" class="btn btn-primary" />
+                    </form>
+                </div>
+
+                <div class="details">
+                    <span class="time"><i class="icon-time"></i> @item.CreatedAt.ToString("dd-MMM-YY")</span>
+                    <span class="pull-right">
+                        @if (item.IsFreeShipping)
+                        {<span>Free Shipped!</span>}
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+</div>

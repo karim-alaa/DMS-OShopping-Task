@@ -11,6 +11,7 @@ using DMSOShopping.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using DMSOShopping.Middlewares;
 
 namespace DMSOShopping.Controllers
 {
@@ -18,11 +19,13 @@ namespace DMSOShopping.Controllers
     {
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager _userManager;
 
-        public CustomersController(DataContext context, IHttpContextAccessor httpContextAccessor)
+        public CustomersController(DataContext context, IHttpContextAccessor httpContextAccessor, UserManager userManager)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         // GET: Customers/Details/5
@@ -146,6 +149,7 @@ namespace DMSOShopping.Controllers
         {
             _httpContextAccessor.HttpContext.Session.SetString(SessionNames.ISLOGIN, SessionNames.NO);
             _httpContextAccessor.HttpContext.Session.Clear();
+            _userManager.SignOut(this.HttpContext);
 
             return RedirectToAction(nameof(Login));
         }
@@ -173,7 +177,9 @@ namespace DMSOShopping.Controllers
                 _httpContextAccessor.HttpContext.Session.SetString(SessionNames.ISLOGIN, SessionNames.YES);
                 _httpContextAccessor.HttpContext.Session.SetString(SessionNames.ROLE, loggedUser.IsAdmin.ToString());
 
-               
+                //authenticate
+                _userManager.SignIn(this.HttpContext, loggedUser);
+
                 var UserStr = JsonConvert.SerializeObject(loggedUser);
                 _httpContextAccessor.HttpContext.Session.SetString(SessionNames.USER, UserStr);
 

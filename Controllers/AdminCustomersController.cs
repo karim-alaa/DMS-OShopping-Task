@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DMSOShopping.Helper;
 using DMSOShopping.Models;
+using Microsoft.AspNetCore.Authorization;
+using DMSOShopping.Constants;
 
 namespace DMSOShopping.Controllers
 {
+    [Authorize(Roles = Roles.ADMIN)]
     public class AdminCustomersController : Controller
     {
         private readonly DataContext _context;

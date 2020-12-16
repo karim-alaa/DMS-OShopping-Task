@@ -19,91 +19,93 @@
     else
     {
 
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-        <div class="container pb-5 mb-2">
-            <!-- Alert-->
-            <div class="alert alert-info alert-dismissible fade show text-center mb-30"><span class="alert-close" data-dismiss="alert"></span><i class="fe-icon-award"></i>&nbsp;&nbsp;New Free Coupons <strong>C1 and C2</strong>, Save from $50 to $100! </div>
-            @{ double TotalCartPrice = 0; double TotalCartPriceWithDiscount = 0; }
-            @foreach (CartItem cartItem in @Model.CartItems)
-            {
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <div class="container pb-5 mb-2">
+        <!-- Alert-->
+        <div class="alert alert-info alert-dismissible fade show text-center mb-30"><span class="alert-close" data-dismiss="alert"></span><i class="fe-icon-award"></i>&nbsp;&nbsp;New Free Coupons <strong>C1 and C2</strong>, Save from $50 to $100! </div>
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {<div class="alert alert-danger alert-dismissible fade show text-center mb-30"><span class="alert-close" data-dismiss="alert"></span><i class="fe-icon-award"></i>&nbsp;&nbsp;<strong>@ViewBag.Error</strong> </div>}
+        @{ double TotalCartPrice = 0; double TotalCartPriceWithDiscount = 0; }
+        @foreach (CartItem cartItem in @Model.CartItems)
+        {
 
-                <!-- Cart Item-->
-                <div class="cart-item d-md-flex justify-content-between">
-                    <a asp-controller="Cart" asp-action="DeleteCartItem" asp-route-id="@cartItem.ItemId"> <span class="remove-item"><i class="fa fa-times"></i></span></a>
-                    <div class="px-3 my-3">
-                        <a class="cart-item-product" asp-controller="Items" asp-action="Details" asp-route-id="@cartItem.Item.Id">
-                            <div class="cart-item-product-info">
-                                <h4 class="cart-item-product-title">@cartItem.Item.Name_FL - @cartItem.Item.Name_SL</h4><span><strong>UOM:</strong> @cartItem.Item.UOM.Name</span><span>
-                                    <strong>Free Shipping:</strong> @if (cartItem.Item.IsFreeShipping)
-                                    {<span>YES</span>}
-                                    else
-                                    {<span>NO</span>}
+            <!-- Cart Item-->
+            <div class="cart-item d-md-flex justify-content-between">
+                <a asp-controller="Cart" asp-action="DeleteCartItem" asp-route-id="@cartItem.ItemId"> <span class="remove-item"><i class="fa fa-times"></i></span></a>
+                <div class="px-3 my-3">
+                    <a class="cart-item-product" asp-controller="Items" asp-action="Details" asp-route-id="@cartItem.Item.Id">
+                        <div class="cart-item-product-info">
+                            <h4 class="cart-item-product-title">@cartItem.Item.Name_FL - @cartItem.Item.Name_SL</h4><span><strong>UOM:</strong> @cartItem.Item.UOM.Name</span><span>
+                                <strong>Free Shipping:</strong> @if (cartItem.Item.IsFreeShipping)
+                                {<span>YES</span>}
+                                else
+                                {<span>NO</span>}
+                        </div>
+                    </a>
+                </div>
+                <div class="px-3 my-3 text-center">
+                    <div class="cart-item-label">Quantity</div>
+
+                    <form asp-action="UpdateCartItem" asp-controller="Cart">
+                        <input name="id" value="@cartItem.ItemId" type="hidden" class="form-control" />
+                        <div class="input-group mb-3">
+                            <input type="number" name="quantity" value="@cartItem.Quantity" min="1" max="10" class="form-control" />
+                            <div class="input-group-append">
+                                <button type="submit" rel="tooltip" class="btn btn-outline-secondary"><i class="fa fa-pencil"></i></button>
                             </div>
-                        </a>
-                    </div>
-                    <div class="px-3 my-3 text-center">
-                        <div class="cart-item-label">Quantity</div>
-
-                        <form asp-action="UpdateCartItem" asp-controller="Cart">
-                            <input name="id" value="@cartItem.ItemId" type="hidden" class="form-control" />
-                            <div class="input-group mb-3">
-                                <input type="number" name="quantity" value="@cartItem.Quantity" min="1" max="10" class="form-control" />
-                                <div class="input-group-append">
-                                    <button type="submit" rel="tooltip" class="btn btn-outline-secondary"><i class="fa fa-pencil"></i></button>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+                    </form>
 
 
-                    </div>
-                    <div class="px-3 my-3 text-center">
-                        <div class="cart-item-label">PRICE</div><span class="text-xl font-weight-medium">$@cartItem.Item.Price</span>
-                    </div>
-                    <div class="px-3 my-3 text-center">
-                        <div class="cart-item-label">TAX</div><span class="text-xl font-weight-medium">@Model.TaxValue</span>
-                    </div>
-
-                    <div class="px-3 my-3 text-center">
-                        @{ double total = (cartItem.Item.Price + (cartItem.Item.Price * Model.TaxValue / 100)) * cartItem.Quantity;
-                            TotalCartPrice += total;
-                        }
-                        <div class="cart-item-label">TOTAL</div><span class="text-xl font-weight-medium">$@Math.Round(total, 2)</span>
-                    </div>
+                </div>
+                <div class="px-3 my-3 text-center">
+                    <div class="cart-item-label">PRICE</div><span class="text-xl font-weight-medium">$@cartItem.Item.Price</span>
+                </div>
+                <div class="px-3 my-3 text-center">
+                    <div class="cart-item-label">TAX</div><span class="text-xl font-weight-medium">@Model.TaxValue</span>
                 </div>
 
-
-            }
-
-            @{ TotalCartPriceWithDiscount = TotalCartPrice - Model.DiscountValue;}
-            @if (!string.IsNullOrEmpty(Model.DiscountCode))
-            {
-
-                <span>@Model.DiscountCode Coupon Applied, You Will Save Total Of $@Model.DiscountValue</span>
-            }
-
-
-            <!-- Coupon + Subtotal-->
-            <div class="d-sm-flex justify-content-between align-items-center text-center text-sm-left">
-                <form class="form-inline py-2" asp-action="AddCouponToCart" asp-controller="Cart">
-                    <label class="sr-only">Coupon code</label>
-                    <input class="form-control form-control-sm my-2 mr-3" name="code" type="text" value="@Model.DiscountCode" placeholder="c1 or c2" required="">
-                    <span asp-validation-for="DiscountCode" class="text-danger"></span> &nbsp;
-                    <button class="btn btn-style-1 btn-secondary btn-sm my-2 mx-auto mx-sm-0" type="submit">Apply Coupon</button>
-                </form>
-                <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Subtotal:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(TotalCartPrice, 2)</span></div>
-                <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Discount:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Model.DiscountValue</span></div>
-                <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">TOTAL:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)</span></div>
+                <div class="px-3 my-3 text-center">
+                    @{ double total = (cartItem.Item.Price + (cartItem.Item.Price * Model.TaxValue / 100)) * cartItem.Quantity;
+                        TotalCartPrice += total;
+                    }
+                    <div class="cart-item-label">TOTAL</div><span class="text-xl font-weight-medium">$@Math.Round(total, 2)</span>
+                </div>
             </div>
 
-            <!-- Buttons-->
-            <hr class="my-2">
-            <div class="row pt-3 pb-5 mb-2">
-                <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-secondary btn-block" asp-controller="Items" asp-action="Index"><i class="fe-icon-refresh-ccw"></i>&nbsp;Back To Items</a></div>
-                <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-primary btn-block" asp-controller="Orders" asp-action="Checkout" asp-route-TotalPrice="@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)"><i class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
-            </div>
 
+                        }
+
+        @{ TotalCartPriceWithDiscount = TotalCartPrice - Model.DiscountValue;}
+        @if (!string.IsNullOrEmpty(Model.DiscountCode))
+        {
+
+            <span>@Model.DiscountCode Coupon Applied, You Will Save Total Of $@Model.DiscountValue</span>
+        }
+
+
+        <!-- Coupon + Subtotal-->
+        <div class="d-sm-flex justify-content-between align-items-center text-center text-sm-left">
+            <form class="form-inline py-2" asp-action="AddCouponToCart" asp-controller="Cart">
+                <label class="sr-only">Coupon code</label>
+                <input class="form-control form-control-sm my-2 mr-3" name="code" type="text" value="@Model.DiscountCode" placeholder="c1 or c2" required="">
+                <span asp-validation-for="DiscountCode" class="text-danger"></span> &nbsp;
+                <button class="btn btn-style-1 btn-secondary btn-sm my-2 mx-auto mx-sm-0" type="submit">Apply Coupon</button>
+            </form>
+            <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Subtotal:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(TotalCartPrice, 2)</span></div>
+            <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Discount:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Model.DiscountValue</span></div>
+            <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">TOTAL:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)</span></div>
         </div>
 
-    }
+        <!-- Buttons-->
+        <hr class="my-2">
+        <div class="row pt-3 pb-5 mb-2">
+            <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-secondary btn-block" asp-controller="Items" asp-action="Index"><i class="fe-icon-refresh-ccw"></i>&nbsp;Back To Items</a></div>
+            <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-primary btn-block" asp-controller="Orders" asp-action="Checkout" asp-route-TotalPrice="@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)"><i class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
+        </div>
+
+    </div>
+
+}
 
 </div>

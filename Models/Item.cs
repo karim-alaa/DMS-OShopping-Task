@@ -31,7 +31,7 @@ namespace DMSOShopping.Models
         [DisplayName("Seller Name")]
         public string SellerName { get; set; }
         public string Description { get; set; }
-        
+        [DisplayName("Avaliable in Stock")]
         public int Quantity { get; set; }
 
 

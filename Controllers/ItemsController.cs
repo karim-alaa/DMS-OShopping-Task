@@ -27,7 +27,7 @@ namespace DMSOShopping.Controllers
         // GET: Items
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Items.ToListAsync());
+            return View(await _context.Items.Where(i => i.Quantity > 0).ToListAsync());
         }
 
         // GET: Items/Details/5
@@ -39,7 +39,7 @@ namespace DMSOShopping.Controllers
             }
 
             var item = await _context.Items
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Where(m => m.Id == id).Include(i => i.UOM).FirstOrDefaultAsync();
             if (item == null)
             {
                 return NotFound();

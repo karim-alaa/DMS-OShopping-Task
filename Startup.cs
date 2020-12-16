@@ -1,6 +1,7 @@
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using DMSOShopping.Helper;
+using DMSOShopping.Middlewares;
 using DMSOShopping.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -58,6 +59,10 @@ namespace DMSOShopping
                   options.LogoutPath = "/Customers/Logout";
                   options.AccessDeniedPath = "/Customers/AccessDenied";
               });
+
+            services.AddTransient(
+               m => new UserManager(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDistributedMemoryCache();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IHelper, Services.Helper>();

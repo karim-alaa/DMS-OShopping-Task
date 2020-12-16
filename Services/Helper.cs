@@ -49,6 +49,8 @@ namespace DMSOShopping.Services
             {
                 Cart cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
+                if (cart == null)
+                    return new Cart();
                 List<Guid> ItemsIds = cart.CartItems.Select(ci => ci.ItemId).ToList();
                 List<Item> items = await _context.Items.Where(i => ItemsIds.Contains(i.Id)).Include(i => i.UOM).AsNoTracking().ToListAsync();
                 foreach (CartItem cartItem in cart.CartItems)

@@ -27,19 +27,24 @@ namespace DMSOShopping.Controllers
             _helper = helper;
         }
 
-
         // GET: Cart/AddToCart/5
-        public IActionResult AddToCart(Guid id, int quantity)
+        public async Task<IActionResult> AddToCart(Guid id, int quantity)
         {
             // We can remove all lines that get cart in a spearate function to reuse it
             string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
             Cart cart = new Cart();
+            Item item = await _context.Items.Where(i => i.Id == id).Include(i => i.UOM).FirstOrDefaultAsync();
+
             if (!string.IsNullOrEmpty(CartStr))
             {
                 cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
                 if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
-                    cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity += quantity;
+                {
+                    CartItem targetTargetItem = cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault();
+                    targetTargetItem.Quantity += quantity;
+                    quantity = targetTargetItem.Quantity;
+                }
                 else
                     cart.CartItems.Add(new CartItem() { ItemId = id, Quantity = quantity });
             }
@@ -49,13 +54,19 @@ namespace DMSOShopping.Controllers
                     new CartItem() { ItemId = id, Quantity = quantity }
                 };
 
+            if (item.Quantity < quantity)
+            {
+                ViewBag.Error = Messages.E_NO_ENOUGH_ITEMS;
+                return View("../Items/Details",item);
+            }
             _helper.UpdateCartSession(cart);
 
-            return RedirectToAction(nameof(ShowMyCart));
+            Cart fullCart = await _helper.GetFullCartData();
+            return View(nameof(ShowMyCart), fullCart);
         }
 
 
-        public IActionResult UpdateCartItem(Guid id, int quantity)
+        public async Task<IActionResult> UpdateCartItem(Guid id, int quantity)
         {
             string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
             Cart cart = new Cart();
@@ -63,13 +74,19 @@ namespace DMSOShopping.Controllers
             {
                 cart = JsonConvert.DeserializeObject<Cart>(CartStr);
 
-                if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
-                    cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity = quantity;
-
+                if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null) 
+                {
+                    Item item = await _context.Items.Where(i => i.Id == id).FirstOrDefaultAsync();
+                    if (item.Quantity >= quantity)
+                        cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity = quantity;
+                    else
+                        ViewBag.Error = Messages.E_NO_ENOUGH_ITEMS;
+                }
+                
                 _helper.UpdateCartSession(cart);
             }
-
-            return RedirectToAction(nameof(ShowMyCart));
+            Cart fullCart = await _helper.GetFullCartData();
+            return View(nameof(ShowMyCart), fullCart);
         }
 
         public IActionResult DeleteCartItem(Guid id)

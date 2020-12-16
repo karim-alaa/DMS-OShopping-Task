@@ -51,9 +51,13 @@ namespace DMSOShopping.Controllers
                 CustomerId = customer.Id
             };
 
+            List<Item> updatedItem = new List<Item>();
             List<OrderDetails> orderDetails = new List<OrderDetails>();
             foreach(CartItem cartItem in cart.CartItems)
             {
+                Item item = await _context.Items.Where(i => i.Id == cartItem.ItemId).FirstOrDefaultAsync();
+                item.Quantity -= cartItem.Quantity;
+                updatedItem.Add(item);
                 orderDetails.Add(new OrderDetails
                 {
                     OrderHeader = OrderHeader,
@@ -67,6 +71,7 @@ namespace DMSOShopping.Controllers
 
             await _context.OrderHeaders.AddAsync(OrderHeader);
             await _context.OrderDetails.AddRangeAsync(orderDetails);
+            _context.Items.UpdateRange(updatedItem);
             await _context.SaveChangesAsync();
 
             _helper.UpdateCartSession(cart, SessionNames.INVOICE);
