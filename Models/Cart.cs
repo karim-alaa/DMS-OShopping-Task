@@ -19,5 +19,21 @@ namespace DMSOShopping.Models
         public string DiscountCode { get; set; }
         public double DiscountValue { get; set; }
 
+
+        public double GetTotalWithTax()
+        {
+            double total = 0;
+            foreach(CartItem cartItem in CartItems)
+            {
+                total += (cartItem.Item.Price + (cartItem.Item.Price * TaxValue / 100)) * cartItem.Quantity; 
+            }
+            return Math.Round(total, 2);
+        }
+
+        public double GetTotalWithTaxAndDiscount()
+        {
+            return Math.Round(Math.Max(0, GetTotalWithTax() - DiscountValue), 2); 
+        }
+
     }
 }

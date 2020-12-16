@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMSOShopping.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -13,8 +14,8 @@ namespace DMSOShopping.Models
 
         public OrderHeader()
         {
-            CreatedAt = DateTime.Now;
-            UpdateAt = DateTime.Now;
+            OrderDate = RequestDate = DueDate = CreatedAt = UpdateAt = DateTime.Now;
+            Status = OrderStatuses.PENDING;
         }
 
         public Guid Id { get; set; }

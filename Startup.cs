@@ -1,4 +1,7 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using DMSOShopping.Helper;
+using DMSOShopping.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +33,10 @@ namespace DMSOShopping
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Html to pdf generator - DinkToPDF
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
             services.AddControllersWithViews();
 
             services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Scoped);
@@ -38,6 +45,8 @@ namespace DMSOShopping
             services.AddMvc(o => o.EnableEndpointRouting = false);
 
             services.AddSession();
+
+           
 
 
             services.AddAuthentication(
@@ -51,7 +60,7 @@ namespace DMSOShopping
               });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            services.AddScoped<IHelper, Services.Helper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,8 +77,6 @@ namespace DMSOShopping
                 app.UseHsts();
             }
 
-         
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -78,7 +85,6 @@ namespace DMSOShopping
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
-
 
             app.UseMvc(routes =>
             {

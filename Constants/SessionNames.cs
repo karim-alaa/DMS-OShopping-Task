@@ -11,6 +11,7 @@ namespace DMSOShopping.Constants
         public const string ROLE = "ROLE";
         public const string YES = "YES";
         public const string NO = "NO";
+        public const string INVOICE = "INVOICE";
         public const string USER = "USER_OBJECT";
         public const string CART = "CART";
         public const string USER_ID = "USER_ID";

@@ -4,6 +4,7 @@
     ViewData["Title"] = "My Cart";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" href="~/css/cart.css" />
 
 
 <h1>My Cart</h1>
@@ -43,8 +44,6 @@
                     <div class="px-3 my-3 text-center">
                         <div class="cart-item-label">Quantity</div>
 
-
-
                         <form asp-action="UpdateCartItem" asp-controller="Cart">
                             <input name="id" value="@cartItem.ItemId" type="hidden" class="form-control" />
                             <div class="input-group mb-3">
@@ -54,10 +53,6 @@
                                 </div>
                             </div>
                         </form>
-
-
-
-
 
 
                     </div>
@@ -97,14 +92,14 @@
                 </form>
                 <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Subtotal:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(TotalCartPrice, 2)</span></div>
                 <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">Discount:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Model.DiscountValue</span></div>
-                <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">TOTAL:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(Math.Abs(TotalCartPriceWithDiscount), 2)</span></div>
+                <div class="py-2"><span class="d-inline-block align-middle text-sm text-muted font-weight-medium text-uppercase mr-2">TOTAL:</span><span class="d-inline-block align-middle text-xl font-weight-medium">$@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)</span></div>
             </div>
 
             <!-- Buttons-->
             <hr class="my-2">
             <div class="row pt-3 pb-5 mb-2">
                 <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-secondary btn-block" asp-controller="Items" asp-action="Index"><i class="fe-icon-refresh-ccw"></i>&nbsp;Back To Items</a></div>
-                <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-primary btn-block" href="checkout-address.html" asp-controller="Orders" asp-action="Checkout" asp-route-cart="@Model"><i class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
+                <div class="col-sm-6 mb-3"><a class="btn btn-style-1 btn-primary btn-block" asp-controller="Orders" asp-action="Checkout" asp-route-TotalPrice="@Math.Round(Math.Max(0, TotalCartPriceWithDiscount), 2)"><i class="fe-icon-credit-card"></i>&nbsp;Checkout</a></div>
             </div>
 
         </div>

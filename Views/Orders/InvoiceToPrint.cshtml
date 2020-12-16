@@ -1,0 +1,97 @@
+﻿@model DMSOShopping.Models.Cart
+@using DMSOShopping.Models;
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "";
+}
+
+
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+@if (ViewBag.Action == "print")
+{
+    <script>
+        window.print();
+    </script>
+}
+
+<hr />
+<div class="col-12">
+    <h1>Invoice</h1>
+    <div class="row">
+        <div class="receipt-main col-12 col-12 col-6 coloffset-1 col-sm-offset-1 coloffset-3">
+            <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CartItem cartItem in Model.CartItems)
+                        {
+                            <tr>
+                                <td class="col-9">@cartItem.Item.Name_FL - @cartItem.Item.Name_SL, @cartItem.Item.Description</td>
+                                <td class="col-3">
+                                    <i class="fa fa-inr"></i>
+                                    @{
+                                        double totalItemPrice = cartItem.Item.Price + (cartItem.Item.Price * Model.TaxValue / 100);
+                                    }
+
+                                    $@totalItemPrice (@cartItem.Quantity)
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="text-right">
+                                <p>
+                                    <strong>Total Amount: </strong>
+                                </p>
+                                <p>
+                                    <strong>Discount: </strong>
+                                </p>
+                            </td>
+
+                            <td>
+                                <p>
+                                    <strong><i class="fa fa-inr"></i> $@Model.GetTotalWithTax()</strong>
+                                </p>
+                                <p>
+                                    <strong><i class="fa fa-inr"></i>$@Model.DiscountValue</strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-right"><h2><strong>Total: </strong></h2></td>
+                            <td class="text-left text-danger"><h2><strong><i class="fa fa-inr"></i> $@Model.GetTotalWithTaxAndDiscount()</strong></h2></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <div class="receipt-header receipt-header-mid receipt-footer">
+                    <div class="col12 col-12 col12 text-left">
+                        <div class="receipt-right">
+                            <p><b>Date :</b> @DateTime.Now.ToString("dd-MMM-yyyy") </p>
+                            <h5 style="color: rgb(140, 140, 140);">Thanks for shopping.!</h5>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="receipt-left">
+                            <span>DMS-OShopping</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

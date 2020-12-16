@@ -1,6 +1,7 @@
 ﻿using DMSOShopping.Constants;
 using DMSOShopping.Helper;
 using DMSOShopping.Models;
+using DMSOShopping.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,13 @@ namespace DMSOShopping.Controllers
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _context;
+        private readonly IHelper _helper;
 
-        public CartController(DataContext context, IHttpContextAccessor httpContextAccessor)
+        public CartController(DataContext context, IHttpContextAccessor httpContextAccessor, IHelper helper)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _helper = helper;
         }
 
 
@@ -46,7 +49,7 @@ namespace DMSOShopping.Controllers
                     new CartItem() { ItemId = id, Quantity = quantity }
                 };
 
-            UpdateCartSession(cart);
+            _helper.UpdateCartSession(cart);
 
             return RedirectToAction(nameof(ShowMyCart));
         }
@@ -63,7 +66,7 @@ namespace DMSOShopping.Controllers
                 if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
                     cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault().Quantity = quantity;
 
-                UpdateCartSession(cart);
+                _helper.UpdateCartSession(cart);
             }
 
             return RedirectToAction(nameof(ShowMyCart));
@@ -80,7 +83,7 @@ namespace DMSOShopping.Controllers
                 if (cart.CartItems != null && cart.CartItems.Where(ci => ci.ItemId == id).FirstOrDefault() != null)
                     cart.CartItems.RemoveAll(i => i.ItemId == id);
 
-                UpdateCartSession(cart);
+                _helper.UpdateCartSession(cart);
             }
 
             return RedirectToAction(nameof(ShowMyCart));
@@ -88,14 +91,14 @@ namespace DMSOShopping.Controllers
 
         public async Task<IActionResult> ShowMyCart()
         {
-            return View(await FullCartOrDefault());
+            return View(await _helper.GetFullCartData());
         }
 
         public async Task<IActionResult> AddCouponToCart(string code)
         {
             Discount.Discounts.TryGetValue(code, out double value);
 
-            Cart cart = await FullCartOrDefault();
+            Cart cart = await _helper.GetFullCartData();
             if (value == 0)
             {
                 ModelState.AddModelError(nameof(cart.DiscountCode), "Coupon Code is Wrong");
@@ -107,35 +110,10 @@ namespace DMSOShopping.Controllers
                 cart.DiscountValue = value;
             }
 
-            UpdateCartSession(cart);
+            _helper.UpdateCartSession(cart);
 
             return View(nameof(ShowMyCart), cart);
 
-        }
-
-        private async Task<Cart> FullCartOrDefault()
-        {
-            string CartStr = _httpContextAccessor.HttpContext.Session.GetString(SessionNames.CART);
-            if (!string.IsNullOrEmpty(CartStr))
-            {
-                Cart cart = JsonConvert.DeserializeObject<Cart>(CartStr);
-
-                List<Guid> ItemsIds = cart.CartItems.Select(ci => ci.ItemId).ToList();
-                List<Item> items = await _context.Items.Where(i => ItemsIds.Contains(i.Id)).Include(i => i.UOM).AsNoTracking().ToListAsync();
-                foreach (CartItem cartItem in cart.CartItems)
-                {
-                    cartItem.Item = items.Where(i => i.Id == cartItem.ItemId).FirstOrDefault();
-                }
-                return cart;
-            }
-            return new Cart();
-        }
-
-        private void UpdateCartSession(Cart cart)
-        {
-            // Update or add session
-            var UpdatedCartItemStr = JsonConvert.SerializeObject(cart);
-            _httpContextAccessor.HttpContext.Session.SetString(SessionNames.CART, UpdatedCartItemStr);
         }
 
 
