@@ -105,8 +105,8 @@ namespace DMSOShopping.Controllers
 
             if (ModelState.IsValid)
             {
-
-                if (await _context.Customers.Where(c => c.Username == customer.Username).FirstOrDefaultAsync() != null)
+                Customer savedCustomer = await _context.Customers.Where(c => c.Id == customer.Id).AsNoTracking().FirstOrDefaultAsync();
+                if (savedCustomer.Username != customer.Username && await _context.Customers.Where(c => c.Username == customer.Username).FirstOrDefaultAsync() != null)
                 {
                     ModelState.AddModelError(nameof(customer.Username), "Username Already Exists");
                     return View(customer);
